@@ -4,6 +4,18 @@
 # Define default values for variables
 COMPOSE_FILE ?= docker-compose.yml
 
+# Define your docker-compose version
+# eg: 1 or 2
+# 1 = docker-compose
+# 2 = docker compose
+DOCKER_COMPOSE_VERSION ?= 1
+DOCKER_COMPOSE ?= docker-compose
+
+# check docker-compose version
+ifeq ($(DOCKER_COMPOSE_VERSION), 2)
+	DOCKER_COMPOSE = docker compose
+endif
+
 #-----------------------------------------------------------
 # Management
 #-----------------------------------------------------------
@@ -25,34 +37,34 @@ install: build up
 
 # Start containers
 up:
-	docker-compose -f ${COMPOSE_FILE} up -d
+	${DOCKER_COMPOSE} -f ${COMPOSE_FILE} up -d
 
 # Stop containers
 down:
-	docker-compose -f ${COMPOSE_FILE} down --remove-orphans
+	${DOCKER_COMPOSE} -f ${COMPOSE_FILE} down --remove-orphans
 
 # Build containers
 build:
-	docker-compose -f ${COMPOSE_FILE} build
+	${DOCKER_COMPOSE} -f ${COMPOSE_FILE} build
 
 # Show list of running containers
 ps:
-	docker-compose -f ${COMPOSE_FILE} ps
+	${DOCKER_COMPOSE} -f ${COMPOSE_FILE} ps
 
 # Restart containers
 restart:
-	docker-compose -f ${COMPOSE_FILE} restart
+	${DOCKER_COMPOSE} -f ${COMPOSE_FILE} restart
 
 # Reboot containers
 reboot: down up
 
 # View output from containers
 logs:
-	docker-compose -f ${COMPOSE_FILE} logs --tail 500
+	${DOCKER_COMPOSE} -f ${COMPOSE_FILE} logs --tail 500
 
 # Follow output from containers (short for 'follow logs')
 fl:
-	docker-compose -f ${COMPOSE_FILE} logs --tail 500 -f
+	${DOCKER_COMPOSE} -f ${COMPOSE_FILE} logs --tail 500 -f
 
 # Prune stopped docker containers and dangling images
 prune:
@@ -64,25 +76,25 @@ prune:
 
 # Enter the app container
 app.bash:
-	docker-compose -f ${COMPOSE_FILE} exec app /bin/bash
+	${DOCKER_COMPOSE} -f ${COMPOSE_FILE} exec app /bin/bash
 
 # Install yarn dependencies
 yarn.install:
-	docker-compose -f ${COMPOSE_FILE} exec app yarn install
+	${DOCKER_COMPOSE} -f ${COMPOSE_FILE} exec app yarn install
 
 # Alias to install yarn dependencies
 yi: yarn.install
 
 # Upgrade yarn dependencies
 yarn.upgrade:
-	docker-compose -f ${COMPOSE_FILE} exec app yarn upgrade
+	${DOCKER_COMPOSE} -f ${COMPOSE_FILE} exec app yarn upgrade
 
 # Alias to upgrade yarn dependencies
 yu: yarn.upgrade
 
 # Show outdated yarn dependencies
 yarn.outdated:
-	docker-compose exec -f ${COMPOSE_FILE} app yarn outdated
+	${DOCKER_COMPOSE} exec -f ${COMPOSE_FILE} app yarn outdated
 
 #-----------------------------------------------------------
 # Swarm
